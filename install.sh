@@ -63,7 +63,6 @@ main() {
                 exit 1
                 ;;
         esac
-        shift
     done
 
     # run
