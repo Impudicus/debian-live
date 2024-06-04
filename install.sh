@@ -120,6 +120,11 @@ main() {
     override_password=""
 
     # parameters
+    if [[ -z "${$#}" ]]; then
+        printLog "error" "Missing action, use --help for further information."
+        exit 1
+    fi
+
     while [[ $# -gt 0 ]]; do
         case "${1}" in
             build)
