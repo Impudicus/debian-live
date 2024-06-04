@@ -55,7 +55,7 @@ runBuild() {
         fi
 
         # add content
-        local source_dir="/var/lib/clamav/"
+        local source_dir="/var/lib/clamav"
         local target_dir="${PWD}/config/includes.chroot_after_packages/var/lib/clamav"
         mkdir --parents "${target_dir}"
 
