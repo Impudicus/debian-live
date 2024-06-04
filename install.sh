@@ -9,6 +9,67 @@ readonly script_start=${SECONDS}
 set -o errexit  # exit on error
 set -o pipefail # return exit status on pipefail
 
+runInstall() {
+    # apt update
+    apt update
+    apt upgrade --yes
+    apt full-upgrade --yes
+
+    # install syslinux
+    apt install --yes \
+        syslinux \
+        syslinux-efi \
+        syslinux-utils \
+        isolinux
+
+    # install live-build
+    apt install --yes \
+        live-build \
+        live-manual \
+        live-tools
+}
+
+runBuild() {
+    (
+        cd "${build_dir}"
+
+        # cleanup config
+        if [[ -d "${PWD}/chroot" ]]; then
+            lb clean
+        fi
+
+        # create config
+        if [[ ! -d "${PWD}/auto" || ! -d "${PWD}/local" ]]; then
+            override_hostname="${override_hostname:-debian-live}"
+            override_username="${override_username:-debian}"
+            override_password="${override_password:-live}"
+
+            lb config \
+                --mode "debian" \
+                --distribution "bookworm" \
+                --debian-installer "none" \
+                --architectures "amd64" \
+                --archive-areas "main contrib non-free non-free-firmware" \
+                --bootappend-live "boot=live components locales=de_DE.UTF-8 keyboard-layouts=de hostname=${override_hostname} username=${override_username}" \
+                --debootstrap-options "--variant=minbase"
+        fi
+
+        # add content
+        local source_dir="/var/lib/clamav/"
+        local target_dir="${PWD}/config/includes.chroot_after_packages/var/lib/clamav"
+        mkdir --parents "${target_dir}"
+
+        cp  ${source_dir}/bytecode.* \
+            ${source_dir}/daily.* \
+            ${source_dir}/main.* \
+            ${source_dir}/freshclam.dat \
+            ${target_dir}
+
+        # build config
+        lb build
+    )
+}
+
 printLog() {
     local log_type="${1}"
     local log_text="${2}"
@@ -30,9 +91,13 @@ printLog() {
 }
 
 printHelp() {
-    printf "Usage: ${script_name} [OPTIONS]\n"
+    printf "Usage: ${script_name} [OPTIONS] Action\n"
     printf "Options:\n"
-    printf "  -h, --help       Show this help message.\n"
+    printf "  -h, --help        Show this help message.\n"
+    printf "\n"
+    printf "Actions:\n"
+    printf "  build             Build live-image with specified configuration.\n"
+    printf "  install           Install requirements for live-build environment.\n"
     printf "\n"
 }
 
@@ -43,17 +108,30 @@ main() {
         exit 1
     fi
 
-    config_dir="${script_path}/config"
-    if [[ ! -d "${config_dir}" ]]; then
-        printLog "error" "Unable to find config folder in the specified directory."
+    build_dir="${script_path}/build"
+    if [[ ! -d "${build_dir}" ]]; then
+        printLog "error" "Unable to find build folder in the specified directory."
         exit 1
     fi
 
     # variables
+    override_hostname=""
+    override_username=""
+    override_password=""
 
     # parameters
     while [[ $# -gt 0 ]]; do
         case "${1}" in
+            build)
+                printLog "info" "Task running: Create live-build ..."
+                runBuild
+                break
+                ;;
+            install)
+                printLog "info" "Task running: Install requirements ..."
+                runInstall
+                break
+                ;;
             -h | --help)
                 printHelp
                 exit 0
@@ -66,9 +144,9 @@ main() {
     done
 
     # run
-    runInstall
 
     printLog "okay" "Script executed successfully."
+    exit 0
 }
 
 main "$@"

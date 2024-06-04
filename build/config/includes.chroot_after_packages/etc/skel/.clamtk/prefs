@@ -1,0 +1,13 @@
+DupeDB=1
+LastInfection=Niemals
+SizeLimit=1
+Thorough=1
+Update=shared
+Mounted=0
+ScanHidden=1
+GUICheck=1
+Whitelist=
+Heuristic=1
+HTTPProxy=0
+TruncateLog=1
+Recursive=1
