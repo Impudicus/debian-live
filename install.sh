@@ -120,7 +120,7 @@ main() {
     override_password=""
 
     # parameters
-    if [[ -z "${$#}" ]]; then
+    if [[ $# -eq 0 ]]; then
         printLog "error" "Missing action, use --help for further information."
         exit 1
     fi
