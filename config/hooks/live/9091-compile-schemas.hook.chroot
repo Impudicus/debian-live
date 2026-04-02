@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# 9091-compile-schemas.hook.chroot
+
+# Compile the GSettings schemas
+glib-compile-schemas /usr/share/glib-2.0/schemas/

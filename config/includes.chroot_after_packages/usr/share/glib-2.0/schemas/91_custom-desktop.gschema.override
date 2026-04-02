@@ -1,0 +1,13 @@
+[org.gnome.desktop.interface]
+color-scheme='prefer-dark'
+gtk-theme='Adwaita-Dark'
+icon-theme='Papirus-Dark'
+
+[org.gnome.desktop.background]
+picture-uri='file:///usr/share/backgrounds/polygon-vector-green.png'
+picture-uri-dark='file:///usr/share/backgrounds/polygon-vector-green.png'
+picture-options='zoom'
+primary-color='#000000'
+
+[org.gnome.desktop.wm.preferences]
+button-layout='appmenu:minimize,maximize,close'

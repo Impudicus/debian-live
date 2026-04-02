@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# 9090-clamav.hook.chroot
+
+# Create the directory for ClamAV signatures if it doesn't exist
+mkdir --parents /var/lib/clamav
+
+# Download the latest ClamAV signature databases from Microsoft's repository
+wget --quiet --output-document=/var/lib/clamav/main.cvd https://packages.microsoft.com/clamav/main.cvd
+wget --quiet --output-document=/var/lib/clamav/daily.cvd https://packages.microsoft.com/clamav/daily.cvd
+wget --quiet --output-document=/var/lib/clamav/bytecode.cvd https://packages.microsoft.com/clamav/bytecode.cvd
+
+# Set ownership/permissions so the live user can modify the databases
+chown 1000:1000 /var/lib/clamav/ --recursive
+chmod 755 /var/lib/clamav/
+chmod 644 /var/lib/clamav/*.cvd

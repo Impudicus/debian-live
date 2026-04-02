@@ -1,0 +1,7 @@
+[org.gnome.shell]
+enabled-extensions=['dash-to-panel@jderose9.github.com']
+favorite-apps=['org.gnome.Nautilus.desktop', 'clamtk.desktop', 'gnome-terminal.desktop']
+
+[org.gnome.shell.extensions.dash-to-panel]
+panel-position='BOTTOM'
+panel-size=32
